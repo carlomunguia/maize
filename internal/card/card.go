@@ -53,6 +53,16 @@ func cardErrorMessage(code stripe.ErrorCode) string {
 		msg = "Your card's security code is incorrect."
 	case stripe.ErrorCodeIncorrectNumber:
 		msg = "Your card number is incorrect."
+	case stripe.ErrorCodeIncorrectZip:
+		msg = "Your card's zip code failed validation."
+	case stripe.ErrorCodeAmountTooLarge:
+		msg = "The amount is too large to process."
+	case stripe.ErrorCodeAmountTooSmall:
+		msg = "The amount is too small to process."
+	case stripe.ErrorCodePostalCodeInvalid:
+		msg = "Your card's postal code failed validation."
+	case stripe.ErrorCodeBalanceInsufficient:
+		msg = "Your card's balance is insufficient."
 	default:
 		msg = "There was an error processing your card."
 	}

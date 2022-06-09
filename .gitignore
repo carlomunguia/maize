@@ -5,7 +5,7 @@
 *.so
 *.dylib
 *.DS_Store
-
+*Makefile
 # Test binary, built with `go test -c`
 *.test
 
