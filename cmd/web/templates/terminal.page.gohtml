@@ -63,6 +63,10 @@
     const payButton = document.getElementById('pay-button');
     const processing = document.getElementById('processing-payment');
 
+    function hidePayButton() {
+        payButton.classList.add('d-none');
+        processing.classList.remove('d-none');
+    }
 
     function val() {
       let form = document.getElementById('charge_form');
@@ -73,7 +77,7 @@
         return;
       }
       form.classList.add('was-validated');
-      
+      hidePayButton();
     }
 
     (function() {
