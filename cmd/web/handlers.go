@@ -3,18 +3,20 @@ package main
 import "net/http"
 
 func (app *application) VirtualTerminal(w http.ResponseWriter, r *http.Request) {
-	if err := app.renderTemplate(w, r, "terminal", nil); err != nil {
+	if err := app.renderTemplate(w, r, "terminal", &templateData{}, "stripe-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
 
-func (app *application) PaymentSucceded(w http.ResponseWriter, r *http.Request) {
+// PaymentSucceeded displays the receipt page
+func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		app.errorLog.Println(err)
 		return
 	}
 
+	// read posted data
 	cardHolder := r.Form.Get("cardholder_name")
 	email := r.Form.Get("email")
 	paymentIntent := r.Form.Get("payment_intent")
@@ -30,10 +32,11 @@ func (app *application) PaymentSucceded(w http.ResponseWriter, r *http.Request) 
 	data["pa"] = paymentAmount
 	data["pc"] = paymentCurrency
 
-	if err := app.renderTemplate(w, r, "payment-succeded", &templateData{
+	// should write this data to session, and then redirect user to new page?
+
+	if err := app.renderTemplate(w, r, "succeeded", &templateData{
 		Data: data,
 	}); err != nil {
 		app.errorLog.Println(err)
 	}
-
 }
