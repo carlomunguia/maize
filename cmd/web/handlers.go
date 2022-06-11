@@ -1,6 +1,9 @@
 package main
 
-import "net/http"
+import (
+	"maize/internal/models"
+	"net/http"
+)
 
 func (app *application) VirtualTerminal(w http.ResponseWriter, r *http.Request) {
 	if err := app.renderTemplate(w, r, "terminal", &templateData{}, "stripe-js"); err != nil {
@@ -42,7 +45,20 @@ func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request)
 }
 
 func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
-	if err := app.renderTemplate(w, r, "buy-once", nil); err != nil {
+	maize := models.Maize{
+		ID:             1,
+		Name:           "Yellow Maize",
+		Description:    "A yellow artisanal corn",
+		InventoryLevel: 10,
+		Price:          1000,
+	}
+
+	data := make(map[string]interface{})
+	data["maize"] = maize
+
+	if err := app.renderTemplate(w, r, "buy-once", &templateData{
+		Data: data,
+	}, "stripe-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
