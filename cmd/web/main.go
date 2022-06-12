@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"maize/internal/driver"
+	"maize/internal/models"
 	"net/http"
 	"os"
 	"time"
@@ -33,6 +34,7 @@ type application struct {
 	errorLog      *log.Logger
 	templateCache map[string]*template.Template
 	version       string
+	DB            models.DBModel
 }
 
 func (app *application) serve() error {
@@ -79,6 +81,7 @@ func main() {
 		errorLog:      errorLog,
 		templateCache: tc,
 		version:       version,
+		DB:            models.DBModel{DB: conn},
 	}
 
 	err = app.serve()

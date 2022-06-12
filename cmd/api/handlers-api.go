@@ -5,6 +5,8 @@ import (
 	"maize/internal/cards"
 	"net/http"
 	"strconv"
+
+	"github.com/go-chi/chi"
 )
 
 type stripePayload struct {
@@ -71,4 +73,24 @@ func (app *application) GetPaymentIntent(w http.ResponseWriter, r *http.Request)
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(out)
 	}
+}
+
+func (app *application) GetMaizeByID(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	maizeID, _ := strconv.Atoi(id)
+
+	maize, err := app.DB.GetMaize(maizeID)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+
+	out, err := json.MarshalIndent(maize, "", "   ")
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(out)
 }
