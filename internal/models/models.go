@@ -84,11 +84,85 @@ func (m *DBModel) GetMaize(id int) (Maize, error) {
 	defer cancel()
 
 	var maize Maize
-	row := m.DB.QueryRowContext(ctx, "SELECT * FROM maize WHERE id = ?", id)
-	err := row.Scan(&maize.ID, &maize.Name)
+	row := m.DB.QueryRowContext(ctx,
+		`SELECT
+		 id, name, description, inventory_level, price, coalesce(image, ''),
+	 	 created_at, updated_at
+	 	 from 
+	 		maize
+		 where id = ?`, id)
+	err := row.Scan(
+		&maize.ID,
+		&maize.Name,
+		&maize.Description,
+		&maize.InventoryLevel,
+		&maize.Price,
+		&maize.Image,
+		&maize.CreatedAt,
+		&maize.UpdatedAt)
 	if err != nil {
 		return maize, err
 	}
 
 	return maize, nil
+}
+
+func (m *DBModel) InsertTransaction(txn Transaction) (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `
+	INSERT INTO transactions
+		 (amount, currency, last_four, bank_return_code,
+		 transaction_status_id, created_at, updated_at)
+	VALUES (?, ?, ?, ?, ?, ?, ?)`
+
+	result, err := m.DB.ExecContext(ctx, stmt,
+		txn.Amount,
+		txn.Currency,
+		txn.LastFour,
+		txn.BankReturnCode,
+		txn.TransactionStatusId,
+		time.Now(),
+		time.Now())
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
+}
+
+func (m *DBModel) InsertOrder(order Order) (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	stmt := `
+	INSERT INTO orders
+		 (maize_id, transaction_id, status_id, quantity,
+		 amount, created_at, updated_at)
+	VALUES (?, ?, ?, ?, ?, ?, ?)`
+
+	result, err := m.DB.ExecContext(ctx, stmt,
+		order.MaizeID,
+		order.TransactionID,
+		order.StatusID,
+		order.Quantity,
+		order.Amount,
+		time.Now(),
+		time.Now())
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
 }

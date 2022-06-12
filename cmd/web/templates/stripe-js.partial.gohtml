@@ -45,7 +45,7 @@
         form.classList.add("was-validated");
         hidePayButton();
 
-        let amountToCharge = String(parseFloat(document.getElementById("amount").value) * 100)
+        let amountToCharge = document.getElementById("amount").value;
         
         let payload = {
             amount: amountToCharge,
@@ -82,7 +82,7 @@
                         } else if(result.paymentIntent) {
                             if (result.paymentIntent.status === "succeeded") {
                                 // we have charged the card
-                                document.getElementById("payment_method").value = result.paymentIntent.payment_method_types[0];
+                                document.getElementById("payment_method").value = result.paymentIntent.payment_method;
                                 document.getElementById("payment_intent").value = result.paymentIntent.id;
                                 document.getElementById("payment_amount").value = result.paymentIntent.amount;
                                 document.getElementById("payment_currency").value = result.paymentIntent.currency;
