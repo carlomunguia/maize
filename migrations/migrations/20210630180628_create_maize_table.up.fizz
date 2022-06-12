@@ -1,0 +1,12 @@
+create_table("maize") {
+    t.Column("id", "integer", {primary: true})
+    t.Column("name", "string", {"default": ""})
+    t.Column("description", "text", {"default": ""})
+    t.Column("inventory_level", "integer", {})
+    t.Column("price", "integer", {})
+}
+
+sql("alter table maize alter column created_at set default now();")
+sql("alter table maize alter column updated_at set default now();")
+
+sql("insert into maize(name, description, inventory_level, price, created_at, updated_at) values ('Yellow Maize', 'A yellow artisanal corn.', 10, 1000, now(), now());")
