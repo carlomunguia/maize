@@ -16,5 +16,6 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+#removes air toml file
 .air.toml
 database.yml
