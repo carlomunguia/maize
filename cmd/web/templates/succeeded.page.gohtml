@@ -10,7 +10,7 @@
             <div class="col-md-12">
                 <h1>Payment succeeded</h1>
                 <p> Payment Intent: {{index .Data "pi"}}</p>
-                <p> Cardholder Name: {{index .Data "cardholder"}}</p>
+                <p> Customer Name: {{index .Data "first_name"}} {{index .Data "last_name"}}</p>
                 <p> Email Address: {{index .Data "email"}}</p>
                 <p> Payment Method: {{index .Data "pm"}}</p>
                 <p> Payment Amount: {{index .Data "pa"}}</p>
