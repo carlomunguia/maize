@@ -1,0 +1,28 @@
+{{template "base" .}}
+
+{{define "title"}}
+    Virtual Terminal: Payment Succeeded
+{{end}}
+
+{{define "content"}}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                {{$txn := index .Data "txn"}}
+                <h1>Payment succeeded</h1>
+                <p> Payment Intent: {{$txn.PaymentIntentID}}</p>
+                <p> Customer Name: {{$txn.FirstName}} {{$txn.LastName}}</p>
+                <p> Email Address: {{$txn.Email}}</p>
+                <p> Payment Method: {{$txn.PaymentMethodID}}</p>
+                <p> Payment Amount: {{formatCurrency $txn.PaymentAmount}}</p>
+                <p> Currency: {{$txn.PaymentCurrency}}</p>
+                <p> Last Four: {{$txn.LastFour}}</p>
+                <p> Bank Return Code: {{$txn.BankReturnCode}}</p>
+                <p> Expiry Date: {{$txn.ExpiryMonth}}/{{$txn.ExpiryYear}}</p>
+                <p>
+                    Thank you for your payment.
+                </p>
+            </div>
+        </div>
+    </div>
+{{end}}

@@ -9,7 +9,7 @@
 <hr>
 <div class="alert alert-danger text-center d-none" id="card-messages"></div>
 
-<form action="/payment-succeeded" method="post"
+<form action="/virtual-terminal-payment-succeeded" method="post"
     name="charge_form" id="charge_form"
     class="d-block needs-validation charge-form"
     autocomplete="off" novalidate="">
@@ -60,9 +60,9 @@
 
 {{define "js"}}
 <script>
- document.getElementById("charge_amount", function(evt) {
+ document.getElementById("charge_amount").addEventListener("change", function(evt) {
     if (evt.target.value !== "") {
-        document.getElementById("amount").value = evt.target.value * 100;
+        document.getElementById("amount").value = parseInt((evt.target.value * 100), 10);
     } else {
         document.getElementById("amount").value = 0;
     }
