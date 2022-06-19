@@ -271,10 +271,16 @@ func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) BronzePlan(w http.ResponseWriter, r *http.Request) {
-	intMap := make(map[string]int)
-	intMap["plan_id"] = 1
+	maize, err := app.DB.GetMaize(2)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+
+	data := make(map[string]interface{})
+	data["maize"] = maize
 	if err := app.renderTemplate(w, r, "bronze-plan", &templateData{
-		IntMap: intMap,
+		Data: data,
 	}); err != nil {
 		app.errorLog.Println(err)
 	}

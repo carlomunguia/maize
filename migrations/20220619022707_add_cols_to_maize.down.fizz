@@ -1,0 +1,2 @@
+drop_column("maize", "is_recurring")
+drop_column("maize", "plan_id")

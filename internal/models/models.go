@@ -29,6 +29,8 @@ type Maize struct {
 	InventoryLevel int       `json:"inventory_level"`
 	Price          int       `json:"price"`
 	Image          string    `json:"image"`
+	IsRecurring    bool      `json:"is_recurring"`
+	PlanID         string    `json:"plan_id"`
 	CreatedAt      time.Time `json:"-"`
 	UpdatedAt      time.Time `json:"-"`
 }
@@ -100,7 +102,7 @@ func (m *DBModel) GetMaize(id int) (Maize, error) {
 	var maize Maize
 	row := m.DB.QueryRowContext(ctx,
 		`SELECT
-		 id, name, description, inventory_level, price, coalesce(image, ''),
+		 id, name, description, inventory_level, price, coalesce(image, ''),is_recurring, plan_id,
 	 	 created_at, updated_at
 	 	 from 
 	 		maize
@@ -112,6 +114,8 @@ func (m *DBModel) GetMaize(id int) (Maize, error) {
 		&maize.InventoryLevel,
 		&maize.Price,
 		&maize.Image,
+		&maize.IsRecurring,
+		&maize.PlanID,
 		&maize.CreatedAt,
 		&maize.UpdatedAt)
 	if err != nil {

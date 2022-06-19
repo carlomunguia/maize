@@ -1,0 +1,2 @@
+add_column("maize", "is_recurring", "bool", {"default": 0})
+add_column("maize", "plan_id", "string", {"default": ""})
