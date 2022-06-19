@@ -16,7 +16,7 @@
     class="d-block needs-validation charge-form"
     autocomplete="off" novalidate="">
 
-    <input type="hidden" name="product_id" value="{{$maize.ID}}">
+    <input type="hidden" name="product_id" id="product_id" value="{{$maize.ID}}">
     <input type="hidden" name="amount"  id="amount" value="{{$maize.Price}}">
 
     <p> {{$maize.Description}}</p>
@@ -134,9 +134,16 @@
         } else {
             let payload = {
                 plan: '{{$maize.PlanID}}',
+                product_id: document.getElementById("product_id").value,
                 payment_method: result.paymentMethod.id,
                 email: document.getElementById("cardholder-email").value,
                 last_four: result.paymentMethod.card.last4,
+                card_brand: result.paymentMethod.card.brand,
+                first_name: document.getElementById("first-name").value,
+                last_name: document.getElementById("last-name").value,
+                exp_month: result.paymentMethod.card.exp_month,
+                exp_year: result.paymentMethod.card.exp_year,
+                amount: document.getElementById("amount").value,
             }
 
             const requestOptions = {
