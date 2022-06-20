@@ -160,7 +160,18 @@
             .then(function(data) {
                 console.log(data)
                 processing.classList.add("d-none");
-                
+                showCardSuccess();
+                sessionStorage.first_name = document.getElementById("first-name").value;
+                sessionStorage.last_name = document.getElementById("last-name").value;
+                sessionStorage.amount = "{{formatCurrency $maize.Price}}";
+                sessionStorage.last_four = result.paymentMethod.card.last4;
+                sessionStorage.card_brand = result.paymentMethod.card.brand;
+                sessionStorage.exp_month = result.paymentMethod.card.exp_month;
+                sessionStorage.exp_year = result.paymentMethod.card.exp_year;
+                sessionStorage.email = document.getElementById("cardholder-email").value;
+                sessionStorage.payment_method = result.paymentMethod.id;
+
+                location.href = "/receipt/bronze";                
             })
         }    
     }

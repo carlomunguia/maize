@@ -1,0 +1,45 @@
+{{template "base" .}}
+
+{{define "title"}}
+    Payment Succeeded
+{{end}}
+
+{{define "content"}}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                {{$txn := index .Data "txn"}}
+                <h1>Payment Succeeded</h1>
+                <p> Customer Name: <span id="first_name"></span> <span id="last_name"></span></p>
+                <p> Email Address: <span id="cardholder_email"></span></p>
+                <p> Payment Method: <span id="payment_method"></span></p>
+                <p> Payment Amount: <span id="amount"></span></p>
+                <p> Last Four: <span id="last_four"></span></p>
+                <p> Card Brand: <span id="card_brand"></span></p>
+                <p> Expiry Date: <span id="exp_month"></span>/<span id="exp_year"></span></p>
+                <p>
+                    Thank you for your payment.
+                </p>
+            </div>
+        </div>
+    </div>
+{{end}}
+
+{{define "js"}}
+<script>
+if (sessionStorage.first_name) {
+    document.getElementById("first_name").innerHTML = sessionStorage.first_name;
+    document.getElementById("last_name").innerHTML = sessionStorage.last_name;
+    document.getElementById("cardholder_email").innerHTML = sessionStorage.cardholder_email;
+    document.getElementById("payment_method").innerHTML = sessionStorage.payment_method;
+    document.getElementById("amount").innerHTML = sessionStorage.amount;
+    document.getElementById("last_four").innerHTML = sessionStorage.last_four;
+    document.getElementById("exp_month").innerHTML = sessionStorage.exp_month;
+    document.getElementById("exp_year").innerHTML = sessionStorage.exp_year;
+    document.getElementById("card_brand").innerHTML. = sessionStorage.card_brand;
+
+    sessionStorage.clear();
+} 
+</script>
+{{end}}
+
