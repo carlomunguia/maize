@@ -10,4 +10,7 @@ require (
 	github.com/stripe/stripe-go/v72 v72.113.0
 )
 
-require github.com/alexedwards/scs/v2 v2.5.0
+require (
+	github.com/alexedwards/scs/v2 v2.5.0
+	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
+)
