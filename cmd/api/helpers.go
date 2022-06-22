@@ -20,7 +20,7 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, data in
 
 	err = dec.Decode(&struct{}{})
 	if err != nil && err != io.EOF {
-		return errors.New("body must only have a single JSON value!")
+		return errors.New("body must only have a single JSON value")
 	}
 
 	return nil
@@ -35,12 +35,25 @@ func (app *application) badRequest(w http.ResponseWriter, r *http.Request, err e
 	payload.Error = true
 	payload.Message = err.Error()
 
-	out, err := json.MarshalIndent(payload, "", "\t")
+	_ = app.writeJSON(w, http.StatusOK, payload)
+
+	return nil
+}
+
+func (app *application) writeJSON(w http.ResponseWriter, status int, data interface{}, headers ...http.Header) error {
+	out, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		return err
 	}
 
+	if len(headers) > 0 {
+		for k, v := range headers[0] {
+			w.Header()[k] = v
+		}
+	}
+
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
 	w.Write(out)
 
 	return nil
