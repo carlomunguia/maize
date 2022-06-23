@@ -24,10 +24,12 @@ type templateData struct {
 	StripePublishableKey string
 }
 
+// functions is a map of functions that can be used in templates
 var functions = template.FuncMap{
 	"formatCurrency": formatCurrency,
 }
 
+// formatCurrency formats a float64 to a currency string
 func formatCurrency(n int) string {
 	f := float32(n) / float32(100)
 	return fmt.Sprintf("$%.2f", f)
@@ -36,6 +38,7 @@ func formatCurrency(n int) string {
 //go:embed templates
 var templateFS embed.FS
 
+// addDefaultData adds default data to the templateData
 func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
 	td.API = app.config.api
 	td.StripeSecretKey = app.config.stripe.secret
@@ -43,6 +46,7 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 	return td
 }
 
+// renderTemplate renders a template to the response
 func (app *application) renderTemplate(w http.ResponseWriter, r *http.Request, page string, td *templateData, partials ...string) error {
 	var t *template.Template
 	var err error
@@ -75,6 +79,7 @@ func (app *application) renderTemplate(w http.ResponseWriter, r *http.Request, p
 	return nil
 }
 
+// parseTemplate parses a template and adds it to the template cache
 func (app *application) parseTemplate(partials []string, page string, templateToRender string) (*template.Template, error) {
 	var t *template.Template
 	var err error

@@ -13,6 +13,7 @@ import (
 
 const version = "1.0.0"
 
+// config is the application configuration structure
 type config struct {
 	port int
 	env  string
@@ -25,6 +26,7 @@ type config struct {
 	}
 }
 
+// application is the application structure
 type application struct {
 	config   config
 	infoLog  *log.Logger
@@ -33,6 +35,7 @@ type application struct {
 	DB       models.DBModel
 }
 
+// serve is the application entry point
 func (app *application) serve() error {
 	srv := &http.Server{
 		Addr:              fmt.Sprintf(":%d", app.config.port),
@@ -43,7 +46,7 @@ func (app *application) serve() error {
 		WriteTimeout:      5 * time.Second,
 	}
 
-	app.infoLog.Println(fmt.Sprintf("Starting Back end server in %s mode on port %d", app.config.env, app.config.port))
+	app.infoLog.Printf("Starting Back end server in %s mode on port %d", app.config.env, app.config.port)
 
 	return srv.ListenAndServe()
 }

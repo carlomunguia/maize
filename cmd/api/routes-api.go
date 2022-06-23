@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/cors"
 )
 
+// routes returns a chi router with all the routes defined.
 func (app *application) routes() http.Handler {
 	mux := chi.NewRouter()
 

@@ -20,6 +20,7 @@ const cssVersion = "1"
 
 var session *scs.SessionManager
 
+// config is the application configuration structure
 type config struct {
 	port int
 	env  string
@@ -33,6 +34,7 @@ type config struct {
 	}
 }
 
+// application is the application structure
 type application struct {
 	config        config
 	infoLog       *log.Logger
@@ -43,6 +45,7 @@ type application struct {
 	Session       *scs.SessionManager
 }
 
+// serve is the application entry point
 func (app *application) serve() error {
 	srv := &http.Server{
 		Addr:              fmt.Sprintf(":%d", app.config.port),

@@ -8,12 +8,14 @@ import (
 	"github.com/stripe/stripe-go/v72/sub"
 )
 
+// Card represents a credit card.
 type Card struct {
 	Secret   string
 	Key      string
 	Currency string
 }
 
+// Transaction represents a transaction.
 type Transaction struct {
 	TransactionStatusId int
 	Amount              int
@@ -22,10 +24,12 @@ type Transaction struct {
 	BankReturnCode      string
 }
 
+// Charge represents a charge.
 func (c *Card) Charge(currency string, amount int) (*stripe.PaymentIntent, string, error) {
 	return c.CreatePaymentIntent(currency, amount)
 }
 
+// CreateCustomer creates a customer.
 func (c *Card) CreateCustomer(pm, email string) (*stripe.Customer, string, error) {
 	stripe.Key = c.Secret
 
@@ -49,6 +53,7 @@ func (c *Card) CreateCustomer(pm, email string) (*stripe.Customer, string, error
 	return cust, "", nil
 }
 
+// CreatePaymentIntent creates a payment intent.
 func (c *Card) CreatePaymentIntent(currency string, amount int) (*stripe.PaymentIntent, string, error) {
 	stripe.Key = c.Secret
 
@@ -68,6 +73,7 @@ func (c *Card) CreatePaymentIntent(currency string, amount int) (*stripe.Payment
 	return pi, "", nil
 }
 
+// GetPaymentMethod returns a payment method.
 func (c *Card) GetPaymentMethod(s string) (*stripe.PaymentMethod, error) {
 	stripe.Key = c.Secret
 
@@ -79,6 +85,7 @@ func (c *Card) GetPaymentMethod(s string) (*stripe.PaymentMethod, error) {
 	return pm, nil
 }
 
+// RetrievePaymentIntent returns a payment intent.
 func (c *Card) RetrievePaymentIntent(id string) (*stripe.PaymentIntent, error) {
 	stripe.Key = c.Secret
 
@@ -90,6 +97,7 @@ func (c *Card) RetrievePaymentIntent(id string) (*stripe.PaymentIntent, error) {
 	return pi, nil
 }
 
+// SubscribeToPlan subscribes a customer to a plan.
 func (c *Card) SubscribeToPlan(cust *stripe.Customer, plan, email, last4, cardType string) (*stripe.Subscription, error) {
 	stripeCustomerID := cust.ID
 	items := []*stripe.SubscriptionItemsParams{
@@ -111,6 +119,7 @@ func (c *Card) SubscribeToPlan(cust *stripe.Customer, plan, email, last4, cardTy
 	return subscription, nil
 }
 
+// cardErrorMessage returns the error message for a card error.
 func cardErrorMessage(code stripe.ErrorCode) string {
 	var msg = ""
 	switch code {

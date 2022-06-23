@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 )
 
+// routes returns a chi router with all the routes defined.
 func (app *application) routes() http.Handler {
 	mux := chi.NewRouter()
 	mux.Use(SessionLoad)

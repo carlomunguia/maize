@@ -7,14 +7,17 @@ import (
 	"time"
 )
 
+// DBModel is a wrapper around a sql.DB that provides a few convenience methods
 type DBModel struct {
 	DB *sql.DB
 }
 
+// Models is a collection of DBModel
 type Models struct {
 	DB DBModel
 }
 
+// NewModels creates a new Model
 func NewModels(db *sql.DB) Models {
 	return Models{
 		DB: DBModel{
@@ -23,6 +26,7 @@ func NewModels(db *sql.DB) Models {
 	}
 }
 
+// Maize is a model for the maize table
 type Maize struct {
 	ID             int       `json:"id"`
 	Name           string    `json:"name"`
@@ -36,6 +40,7 @@ type Maize struct {
 	UpdatedAt      time.Time `json:"-"`
 }
 
+// Order is a model for the orders table
 type Order struct {
 	ID            int       `json:"id"`
 	MaizeID       int       `json:"maize_id"`
@@ -48,6 +53,7 @@ type Order struct {
 	UpdatedAt     time.Time `json:"-"`
 }
 
+// Status is a model for the status table
 type Status struct {
 	ID        int       `json:"id"`
 	Name      string    `json:"name"`
@@ -55,6 +61,7 @@ type Status struct {
 	UpdatedAt time.Time `json:"-"`
 }
 
+// TransactionStatus is a model for the transaction_status table
 type TransactionStatus struct {
 	ID        int       `json:"id"`
 	Name      string    `json:"name"`
@@ -62,6 +69,7 @@ type TransactionStatus struct {
 	UpdatedAt time.Time `json:"-"`
 }
 
+// Transaction is a model for the transactions table
 type Transaction struct {
 	ID                  int       `json:"id"`
 	Amount              int       `json:"amount"`
@@ -77,6 +85,7 @@ type Transaction struct {
 	UpdatedAt           time.Time `json:"-"`
 }
 
+// User is a model for the users table
 type User struct {
 	ID        int       `json:"id"`
 	FirstName string    `json:"first_name"`
@@ -87,6 +96,7 @@ type User struct {
 	UpdatedAt time.Time `json:"-"`
 }
 
+// Customer is a model for the customers table
 type Customer struct {
 	ID        int       `json:"id"`
 	FirstName string    `json:"first_name"`
@@ -96,6 +106,7 @@ type Customer struct {
 	UpdatedAt time.Time `json:"-"`
 }
 
+// GetMaize returns a single maize by ID
 func (m *DBModel) GetMaize(id int) (Maize, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -126,6 +137,7 @@ func (m *DBModel) GetMaize(id int) (Maize, error) {
 	return maize, nil
 }
 
+// InsertTransaction inserts a new transaction
 func (m *DBModel) InsertTransaction(txn Transaction) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -160,6 +172,7 @@ func (m *DBModel) InsertTransaction(txn Transaction) (int, error) {
 	return int(id), nil
 }
 
+// InsertOrder inserts a new order
 func (m *DBModel) InsertOrder(order Order) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -191,6 +204,7 @@ func (m *DBModel) InsertOrder(order Order) (int, error) {
 	return int(id), nil
 }
 
+// InsertCustomer inserts a new customer
 func (m *DBModel) InsertCustomer(c Customer) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -218,6 +232,7 @@ func (m *DBModel) InsertCustomer(c Customer) (int, error) {
 	return int(id), nil
 }
 
+// GetUserByEmail returns a single user by email
 func (m *DBModel) GetUserByEmail(email string) (User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

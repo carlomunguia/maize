@@ -12,6 +12,7 @@ import (
 	"github.com/stripe/stripe-go/v72"
 )
 
+// stripePayload is the payload sent to the Stripe API
 type stripePayload struct {
 	Currency      string `json:"currency"`
 	Amount        string `json:"amount"`
@@ -27,6 +28,7 @@ type stripePayload struct {
 	LastName      string `json:"last_name"`
 }
 
+// jsonResponse is the response sent to the client
 type jsonResponse struct {
 	OK      bool   `json:"ok"`
 	Message string `json:"message,omitempty"`
@@ -34,6 +36,7 @@ type jsonResponse struct {
 	ID      int    `json:"id,omitempty"`
 }
 
+// GetPaymentIntent returns a payment intent
 func (app *application) GetPaymentIntent(w http.ResponseWriter, r *http.Request) {
 	var payload stripePayload
 
@@ -88,6 +91,7 @@ func (app *application) GetPaymentIntent(w http.ResponseWriter, r *http.Request)
 	}
 }
 
+// GetMaizeID returns the maize ID for any given product
 func (app *application) GetMaizeByID(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	maizeID, _ := strconv.Atoi(id)
@@ -108,6 +112,7 @@ func (app *application) GetMaizeByID(w http.ResponseWriter, r *http.Request) {
 	w.Write(out)
 }
 
+// CreateCustomerAndSubscribeToPlan creates a customer and subscribes them to a plan
 func (app *application) CreateCustomerAndSubscribeToPlan(w http.ResponseWriter, r *http.Request) {
 	var data stripePayload
 
@@ -213,6 +218,7 @@ func (app *application) CreateCustomerAndSubscribeToPlan(w http.ResponseWriter, 
 
 }
 
+// SaveCustomer saves a customer to the database
 func (app *application) SaveCustomer(firstName, lastName, email string) (int, error) {
 	customer := models.Customer{
 		FirstName: firstName,
@@ -227,6 +233,7 @@ func (app *application) SaveCustomer(firstName, lastName, email string) (int, er
 	return id, nil
 }
 
+// SaveTransaction saves a transaction to the database
 func (app *application) SaveTransaction(txn models.Transaction) (int, error) {
 	id, err := app.DB.InsertTransaction(txn)
 	if err != nil {
@@ -235,6 +242,7 @@ func (app *application) SaveTransaction(txn models.Transaction) (int, error) {
 	return id, nil
 }
 
+// SaveOrder saves an order to the database
 func (app *application) SaveOrder(order models.Order) (int, error) {
 	id, err := app.DB.InsertOrder(order)
 	if err != nil {
@@ -243,6 +251,7 @@ func (app *application) SaveOrder(order models.Order) (int, error) {
 	return id, nil
 }
 
+// CreateAuthToken creates an auth token for a customer
 func (app *application) CreateAuthToken(w http.ResponseWriter, r *http.Request) {
 	var userInput struct {
 		Email    string `json:"email"`

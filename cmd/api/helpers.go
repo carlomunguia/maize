@@ -9,6 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// readJSON reads the body of the request and unmarshals it into the given structure
 func (app *application) readJSON(w http.ResponseWriter, r *http.Request, data interface{}) error {
 	maxBytes := 1048576
 
@@ -28,6 +29,7 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, data in
 	return nil
 }
 
+// badRequest writes an error message when a jsonResponse fails
 func (app *application) badRequest(w http.ResponseWriter, r *http.Request, err error) error {
 	var payload struct {
 		Error   bool   `json:"error"`
@@ -42,6 +44,7 @@ func (app *application) badRequest(w http.ResponseWriter, r *http.Request, err e
 	return nil
 }
 
+// writeJSON writes the given structure to the response writer & is helpful :)
 func (app *application) writeJSON(w http.ResponseWriter, status int, data interface{}, headers ...http.Header) error {
 	out, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
@@ -61,6 +64,7 @@ func (app *application) writeJSON(w http.ResponseWriter, status int, data interf
 	return nil
 }
 
+// invalidCredentials writes an error message when a user tries to login with invalid credentials
 func (app *application) invalidCredentials(w http.ResponseWriter) error {
 	var payload struct {
 		Error   bool   `json:"error"`
@@ -77,6 +81,7 @@ func (app *application) invalidCredentials(w http.ResponseWriter) error {
 	return nil
 }
 
+// verifyPassword checks if the given password matches the hashed password
 func (app *application) verifyPassword(hash, password string) (bool, error) {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	if err != nil {

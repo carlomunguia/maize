@@ -10,18 +10,21 @@ import (
 	"github.com/go-chi/chi"
 )
 
+// Home displays the home page
 func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 	if err := app.renderTemplate(w, r, "home", &templateData{}); err != nil {
 		app.errorLog.Println(err)
 	}
 }
 
+// VirtualTerminal displays the virtual terminal page
 func (app *application) VirtualTerminal(w http.ResponseWriter, r *http.Request) {
 	if err := app.renderTemplate(w, r, "terminal", &templateData{}, "stripe-js"); err != nil {
 		app.errorLog.Println(err)
 	}
 }
 
+// TransactionData is the data structure for the transaction
 type TransactionData struct {
 	FirstName       string
 	LastName        string
@@ -36,6 +39,7 @@ type TransactionData struct {
 	BankReturnCode  string
 }
 
+// GetTransactionData gets the transaction data from the request
 func (app *application) GetTransactionData(r *http.Request) (TransactionData, error) {
 	var txnData TransactionData
 	err := r.ParseForm()
@@ -124,6 +128,7 @@ func (app *application) VirtualTerminalPaymentSucceeded(w http.ResponseWriter, r
 	http.Redirect(w, r, "/virtual-terminal-receipt", http.StatusSeeOther)
 }
 
+// PaymentSucceeded processes a successful payment
 func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -194,6 +199,7 @@ func (app *application) PaymentSucceeded(w http.ResponseWriter, r *http.Request)
 	http.Redirect(w, r, "/receipt", http.StatusSeeOther)
 }
 
+// BronzePlanReceipt displays the bronze plan receipt page
 func (app *application) BronzePlanReceipt(w http.ResponseWriter, r *http.Request) {
 	if err := app.renderTemplate(w, r, "receipt-plan", &templateData{}); err != nil {
 		app.errorLog.Println(err)
@@ -201,6 +207,7 @@ func (app *application) BronzePlanReceipt(w http.ResponseWriter, r *http.Request
 	}
 }
 
+// Receipt displays the generic receipt page
 func (app *application) Receipt(w http.ResponseWriter, r *http.Request) {
 	txn := app.Session.Get(r.Context(), "receipt").(TransactionData)
 	data := make(map[string]interface{})
@@ -214,6 +221,7 @@ func (app *application) Receipt(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// VirtualTerminalReceipt displays the virtual terminal receipt page
 func (app *application) VirtualTerminalReceipt(w http.ResponseWriter, r *http.Request) {
 	txn := app.Session.Get(r.Context(), "receipt").(TransactionData)
 	data := make(map[string]interface{})
@@ -227,6 +235,7 @@ func (app *application) VirtualTerminalReceipt(w http.ResponseWriter, r *http.Re
 	}
 }
 
+// SaveCustomer saves a customer to the database
 func (app *application) SaveCustomer(firstName, lastName, email string) (int, error) {
 	customer := models.Customer{
 		FirstName: firstName,
@@ -241,6 +250,7 @@ func (app *application) SaveCustomer(firstName, lastName, email string) (int, er
 	return id, nil
 }
 
+// SaveTransaction saves a transaction to the database
 func (app *application) SaveTransaction(txn models.Transaction) (int, error) {
 	id, err := app.DB.InsertTransaction(txn)
 	if err != nil {
@@ -257,6 +267,7 @@ func (app *application) SaveOrder(order models.Order) (int, error) {
 	return id, nil
 }
 
+// ChargeOnce charges the customer once
 func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	maizeID, _ := strconv.Atoi(id)
@@ -277,6 +288,7 @@ func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// BronzePlan creates a bronze plan for the customer
 func (app *application) BronzePlan(w http.ResponseWriter, r *http.Request) {
 	maize, err := app.DB.GetMaize(2)
 	if err != nil {
@@ -293,6 +305,7 @@ func (app *application) BronzePlan(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// LoginPage displays the login page
 func (app *application) LoginPage(w http.ResponseWriter, r *http.Request) {
 	if err := app.renderTemplate(w, r, "login", &templateData{}); err != nil {
 		app.errorLog.Println(err)
