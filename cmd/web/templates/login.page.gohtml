@@ -7,6 +7,9 @@
 {{define "content"}}
 <div class="row">
 <div class="col-md-6 offset-md-3">
+
+<div class="alert alert-danger text-center d-none" id="login-messages"></div>
+
 <form action="" method="post"
     name="login_form" id="login_form"
     class="d-block needs-validation login-form"
@@ -39,6 +42,21 @@
     
 {{define "js"}}
 <script>
+let loginMessages = document.getElementById('login-messages');
+    function showLoginError(msg) {
+        loginMessages.classList.add("alert-danger");
+        loginMessages.classList.remove("alert-success");
+        loginMessages.classList.remove("d-none");
+        loginMessages.innerText = msg;
+    }
+
+    function showLoginSuccess() {
+        loginMessages.classList.remove("alert-danger");
+        loginMessages.classList.add("alert-success");
+        loginMessages.classList.remove("d-none");
+        loginMessages.innerText = "Login successful";
+    }
+
     function val() {
        let form = document.getElementById("login_form");
         if (form.checkValidity() === false) {
@@ -66,8 +84,15 @@
 
         fetch("{{.API}}/api/authenticate", requestOptions)
             .then(response => response.json())
-            .then(response => {
-                console.log(response);
+            .then(data => {
+                console.log(data);
+                if (data.error === false) {
+                    localStorage.setItem("token", data.authentication_token.token);
+                    localStorage.setItem("token_expiration", data.authentication_token.expiration);
+                    showLoginSuccess();
+                } else {
+                    showLoginError(data.message);
+                }
             })
     }
 </script>
