@@ -81,7 +81,6 @@ let loginMessages = document.getElementById('login-messages');
             },
             body: JSON.stringify(payload),
         }
-
         fetch("{{.API}}/api/authenticate", requestOptions)
             .then(response => response.json())
             .then(data => {
@@ -90,6 +89,7 @@ let loginMessages = document.getElementById('login-messages');
                     localStorage.setItem("token", data.authentication_token.token);
                     localStorage.setItem("token_expiration", data.authentication_token.expiration);
                     showLoginSuccess();
+                    location.href = "/"; 
                 } else {
                     showLoginError(data.message);
                 }

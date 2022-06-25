@@ -23,9 +23,6 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="/">Home</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/virtual-terminal">Virtual Terminal</a>
-        </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Products
@@ -35,9 +32,12 @@
             <li><a class="dropdown-item" href="/plans/bronze">Subscription</a></li>
           </ul>
         </li>
+        <li class="nav-item d-none" id="vt-link">
+          <a class="nav-link" href="/virtual-terminal">Virtual Terminal</a>
+        </li>
       </ul>
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item">
+        <li class="nav-item d-none" id="login-link">
           <a class="nav-link" href="/login">Login</a>
         </li>
         <li class="nav-item">
@@ -55,6 +55,28 @@
         </div>
     </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+          
+        <script>
+        let loginLink = document.getElementById("login-link");
+        let vtLink = document.getElementById("vt-link");
+
+        document.addEventListener("DOMContentLoaded", function() {
+            if (localStorage.getItem("token") !== null) {
+              loginLink.innerHTML = '<a class="nav-link" onclick="logout()" href="#!">Logout</a></li>';
+              vtLink.classList.remove("d-none");   
+            } else {
+              loginLink.innerHTML = '<a class="nav-link" href="/login">Login</a></li>';
+            }
+            loginLink.classList.remove("d-none");
+        });
+
+        function logout() {
+          localStorage.removeItem("token");
+          localStorage.removeItem("token_expiration");
+          location.href = "/login";
+        }
+
+        </script>  
           {{block "js" .}}
 
           {{end}}
