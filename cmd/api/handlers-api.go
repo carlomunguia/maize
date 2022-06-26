@@ -306,3 +306,7 @@ func (app *application) CreateAuthToken(w http.ResponseWriter, r *http.Request) 
 
 	_ = app.writeJSON(w, http.StatusOK, payload)
 }
+
+func (app *application) CheckAuthentication(w http.ResponseWriter, r *http.Request) {
+	app.invalidCredentials(w)
+}

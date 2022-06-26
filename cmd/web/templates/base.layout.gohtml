@@ -76,6 +76,33 @@
           location.href = "/login";
         }
 
+        function checkAuth() {
+          if (localStorage.getItem("token") === null) {
+            location.href = "/login";
+            return 
+          } else {
+            let token = localStorage.getItem("token");
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("Authorization", "Bearer " + token);
+          }
+
+            const requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+            };
+
+            fetch("{{.API}}/api/is-authenticated", requestOptions)
+            .then(response => response.json())
+            .then(function(data) {
+              if (data.success === false) {
+                console.log("Not authenticated");
+                location.href = "/login";
+              } else {
+                console.log("Authenticated");
+              } 
+            });
+        } 
         </script>  
           {{block "js" .}}
 
