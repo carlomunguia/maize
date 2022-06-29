@@ -61,9 +61,19 @@
         <h3 class="mt-3 text-center">Receipt</h3>
         <hr>
         <p>
+            <strong>Payment Amount</strong>: <span id="payment-amount"></span>
+        </p>
+        <p>
             <strong>Bank Return Code</strong>: <span id="bank-return-code"></span>
         </p>
-            <a class="btn btn-primary" href="/virtual-terminal">
+        <p>
+          <strong>Payment Intent</strong>: <span id="payment-intent"></span>
+        </p>
+        <p>
+            <strong>Payment Method</strong>: <span id="payment-method"></span>
+        </p>
+    
+            <a class="btn btn-primary" href="/admin/virtual-terminal">
                 Pay with Another Card
             </a>
     </div>
@@ -211,7 +221,11 @@ checkAuth();
                 console.log(data)
                 processing.classList.add("d-none");
                 showCardSuccess();
+
                 document.getElementById("bank-return-code").innerHTML = data.bank_return_code;
+                document.getElementById("payment-intent").innerHTML = data.payment_intent;
+                document.getElementById("payment-method").innerHTML = data.payment_method;
+                document.getElementById("payment-amount").innerHTML = data.amount;
                 document.getElementById("receipt").classList.remove("d-none");
             })
     }
