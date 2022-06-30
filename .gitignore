@@ -19,3 +19,5 @@
 #removes air toml file
 .air.toml
 database.yml
+environment-variables.go
+
