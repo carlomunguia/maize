@@ -13,7 +13,7 @@ import (
 //go:embed templates
 var emailTemplateFS embed.FS
 
-func (app *application) SendEmail(from, to, subject, tmpl string, data interface{}) error {
+func (app *application) SendMail(from, to, subject, tmpl string, data interface{}) error {
 	templateToRender := fmt.Sprintf("templates/%s.html.tmpl", tmpl)
 
 	t, err := template.New("email-html").ParseFS(emailTemplateFS, templateToRender)
@@ -46,6 +46,7 @@ func (app *application) SendEmail(from, to, subject, tmpl string, data interface
 
 	app.infoLog.Println(formattedMessage, plainMessage)
 
+	// send the mail
 	server := mail.NewSMTPClient()
 	server.Host = app.config.smtp.host
 	server.Port = app.config.smtp.port

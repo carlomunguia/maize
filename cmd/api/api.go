@@ -60,16 +60,18 @@ func (app *application) serve() error {
 func main() {
 	var cfg config
 
-	mailTrapUser := os.Getenv("MAILTRAP_USER")
-	mailTrapPass := os.Getenv("MAILTRAP_PASS")
+	mailTrapUser := GoDotEnvVariable("MAILTRAP_USER")
+	mailTrapPass := GoDotEnvVariable("MAILTRAP_PASS")
 
 	flag.IntVar(&cfg.port, "port", 4001, "Server port to listen on")
 	flag.StringVar(&cfg.env, "env", "development", "Application enviornment {development|production|maintenance}")
 	flag.StringVar(&cfg.db.dsn, "dsn", "maize:maize@tcp(localhost:3306)/maize?parseTime=true&tls=false", "DSN")
-	flag.StringVar(&cfg.smtp.host, "smtphost", "smtp.mailtrap.io", "SMTP host")
-	flag.StringVar(&cfg.smtp.username, "smtpuser", mailTrapUser, "SMTP user")
-	flag.StringVar(&cfg.smtp.password, "smtppass", mailTrapPass, "SMTP password")
+	flag.StringVar(&cfg.smtp.host, "smtphost", "smtp.mailtrap.io", "smtp host")
+	flag.StringVar(&cfg.smtp.username, "smtpuser", mailTrapUser, "smtp user")
+	flag.StringVar(&cfg.smtp.password, "smtppass", mailTrapPass, "smtp password")
 	flag.IntVar(&cfg.smtp.port, "smtpport", 587, "SMTP port")
+
+	log.Println(mailTrapPass, mailTrapUser, "test")
 
 	flag.Parse()
 

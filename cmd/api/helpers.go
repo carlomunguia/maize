@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log"
 	"net/http"
+	"os"
 
+	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -95,4 +98,15 @@ func (app *application) verifyPassword(hash, password string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func GoDotEnvVariable(key string) string {
+	// load .env file
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	return os.Getenv(key)
 }

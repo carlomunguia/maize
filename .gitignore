@@ -21,3 +21,4 @@
 database.yml
 environment-variables.go
 
+.env
