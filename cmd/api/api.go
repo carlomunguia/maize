@@ -30,6 +30,8 @@ type config struct {
 		username string
 		password string
 	}
+	secretkey string
+	frontend  string
 }
 
 // application is the application structure
@@ -62,6 +64,7 @@ func main() {
 
 	mailTrapUser := GoDotEnvVariable("MAILTRAP_USER")
 	mailTrapPass := GoDotEnvVariable("MAILTRAP_PASS")
+	secretKey := GoDotEnvVariable("SECRET_KEY")
 
 	flag.IntVar(&cfg.port, "port", 4001, "Server port to listen on")
 	flag.StringVar(&cfg.env, "env", "development", "Application enviornment {development|production|maintenance}")
@@ -69,6 +72,8 @@ func main() {
 	flag.StringVar(&cfg.smtp.host, "smtphost", "smtp.mailtrap.io", "smtp host")
 	flag.StringVar(&cfg.smtp.username, "smtpuser", mailTrapUser, "smtp user")
 	flag.StringVar(&cfg.smtp.password, "smtppass", mailTrapPass, "smtp password")
+	flag.StringVar(&cfg.secretkey, "secret", secretKey, "secret key")
+	flag.StringVar(&cfg.frontend, "frontend", "http://localhost:4000", "frontend url")
 	flag.IntVar(&cfg.smtp.port, "smtpport", 587, "SMTP port")
 
 	log.Println(mailTrapPass, mailTrapUser, "test")

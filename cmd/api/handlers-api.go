@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"maize/internal/cards"
 	"maize/internal/models"
+	"maize/internal/urlsigner"
 	"net/http"
 	"strconv"
 	"strings"
@@ -424,11 +425,32 @@ func (app *application) SendPasswordResetEmail(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	_, err = app.DB.GetUserByEmail(payload.Email)
+	if err != nil {
+		var resp struct {
+			Error   bool   `json:"error"`
+			Message string `json:"message"`
+		}
+
+		resp.Error = true
+		resp.Message = "No user found with that email address"
+		app.writeJSON(w, http.StatusAccepted, resp)
+		return
+	}
+
+	link := fmt.Sprintf("%s/reset-password?email=%s", app.config.frontend, payload.Email)
+
+	sign := urlsigner.Signer{
+		Secret: []byte(app.config.secretkey),
+	}
+
+	signedLink := sign.GenerateTokenFromString(link)
+
 	var data struct {
 		Link string
 	}
 
-	data.Link = "https://carlomunguia.com"
+	data.Link = signedLink
 
 	err = app.SendMail("info@maize.com", "info@maize.com", "Password Reset Request", "password-reset", data)
 	if err != nil {
