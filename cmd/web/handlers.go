@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"maize/internal/cards"
+	"maize/internal/encryption"
 	"maize/internal/models"
 	"maize/internal/urlsigner"
 	"net/http"
@@ -350,6 +351,7 @@ func (app *application) ForgotPassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) ShowResetPassword(w http.ResponseWriter, r *http.Request) {
+	email := r.URL.Query().Get("email")
 	url := r.RequestURI
 	testUrl := fmt.Sprintf("%s%s", app.config.frontend, url)
 
@@ -365,8 +367,26 @@ func (app *application) ShowResetPassword(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	expired := signer.Expired(testUrl, 60)
+	if expired {
+		app.errorLog.Println("Url expired")
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	encryptor := encryption.Encryption{
+		Key: []byte(app.config.secretkey),
+	}
+
+	encryptedEmail, err := encryptor.Encrypt(email)
+	if err != nil {
+		app.errorLog.Println(err)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
 	data := make(map[string]interface{})
-	data["email"] = r.URL.Query().Get("email")
+	data["email"] = encryptedEmail
 
 	if err := app.renderTemplate(w, r, "reset-password", &templateData{
 		Data: data,
