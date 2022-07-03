@@ -33,6 +33,8 @@ type config struct {
 		secret string
 		key    string
 	}
+	secretkey string
+	frontend  string
 }
 
 // application is the application structure
@@ -64,11 +66,14 @@ func (app *application) serve() error {
 func main() {
 	gob.Register(TransactionData{})
 	var cfg config
+	secretKey := GoDotEnvVariable("SECRET_KEY")
 
 	flag.IntVar(&cfg.port, "port", 4000, "Port to listen on")
 	flag.StringVar(&cfg.env, "env", "development", "Application environment {development|production}")
 	flag.StringVar(&cfg.db.dsn, "dsn", "maize:maize@tcp(localhost:3306)/maize?parseTime=true&tls=false", "DSN")
 	flag.StringVar(&cfg.api, "api", "http://localhost:4001", "URL to API")
+	flag.StringVar(&cfg.secretkey, "secret", secretKey, "secret key")
+	flag.StringVar(&cfg.frontend, "frontend", "http://localhost:4000", "frontend url")
 
 	flag.Parse()
 

@@ -76,8 +76,6 @@ func main() {
 	flag.StringVar(&cfg.frontend, "frontend", "http://localhost:4000", "frontend url")
 	flag.IntVar(&cfg.smtp.port, "smtpport", 587, "SMTP port")
 
-	log.Println(mailTrapPass, mailTrapUser, "test")
-
 	flag.Parse()
 
 	cfg.stripe.key = os.Getenv("STRIPE_KEY")
