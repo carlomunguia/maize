@@ -61,7 +61,7 @@ func (app *application) renderTemplate(w http.ResponseWriter, r *http.Request, p
 
 	_, templateInMap := app.templateCache[templateToRender]
 
-	if app.config.env == "production" && templateInMap {
+	if templateInMap {
 		t = app.templateCache[templateToRender]
 	} else {
 		t, err = app.parseTemplate(partials, page, templateToRender)

@@ -1,0 +1,2 @@
+sql("insert into maize(name, description, inventory_level, price, created_at, updated_at, image, is_recurring, plan_id) values ('Yellow Maize', 'A yellow artisanal corn.', 10, 1000, now(), now(), '/static/maize.png', 0, '');")
+sql("insert into maize(name, description, inventory_level, price, created_at, updated_at, image, is_recurring, plan_id) values ('Bronze Plan', 'Get 3 yellow maize for price of two every month', 10, 2000, now(), now(), '', 1, 'price_1LBsqJCnbzIjzjpOhDjNu9RV');")

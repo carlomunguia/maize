@@ -395,3 +395,15 @@ func (app *application) ShowResetPassword(w http.ResponseWriter, r *http.Request
 	}
 
 }
+
+func (app *application) AllSales(w http.ResponseWriter, r *http.Request) {
+	if err := app.renderTemplate(w, r, "all-sales", &templateData{}); err != nil {
+		app.errorLog.Println(err)
+	}
+}
+
+func (app *application) AllSubs(w http.ResponseWriter, r *http.Request) {
+	if err := app.renderTemplate(w, r, "all-subs", &templateData{}); err != nil {
+		app.errorLog.Println(err)
+	}
+}

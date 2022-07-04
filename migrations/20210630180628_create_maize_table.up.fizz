@@ -8,5 +8,3 @@ create_table("maize") {
 
 sql("alter table maize alter column created_at set default now();")
 sql("alter table maize alter column updated_at set default now();")
-
-sql("insert into maize(name, description, inventory_level, price, created_at, updated_at) values ('Yellow Maize', 'A yellow artisanal corn.', 10, 1000, now(), now());")

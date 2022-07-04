@@ -1,0 +1,46 @@
+{{template "base" .}}
+
+{{define "title"}}
+    All Sales
+{{end}}
+
+{{define "content"}}
+    <h2 class="mt-5">All Sales</h2>
+    <hr>
+
+    <table id="sales-table" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Transaction</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+{{end}}
+
+{{define "js"}}
+<script>
+    let token = localStorage.getItem("token");
+    let tbody = document.getElementById("sales-table").getElementsByTagName("tbody")[0];
+
+    const requestOptions = {
+        method: 'post',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
+        },
+    }
+
+    fetch("{{.API}}/api/admin/all-sales", requestOptions)
+    .then(response => response.json())
+    .then(function (data) {
+        console.log(data);
+    })
+</script>
+{{end}}
