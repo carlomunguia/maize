@@ -407,3 +407,25 @@ func (app *application) AllSubs(w http.ResponseWriter, r *http.Request) {
 		app.errorLog.Println(err)
 	}
 }
+
+func (app *application) ShowSale(w http.ResponseWriter, r *http.Request) {
+	stringMap := make(map[string]string)
+	stringMap["title"] = "Sale"
+	stringMap["back"] = "/admin/all-sales"
+	if err := app.renderTemplate(w, r, "sale", &templateData{
+		StringMap: stringMap,
+	}); err != nil {
+		app.errorLog.Println(err)
+	}
+}
+
+func (app *application) ShowSub(w http.ResponseWriter, r *http.Request) {
+	stringMap := make(map[string]string)
+	stringMap["title"] = "Subscription"
+	stringMap["back"] = "/admin/all-subs"
+	if err := app.renderTemplate(w, r, "sale", &templateData{
+		StringMap: stringMap,
+	}); err != nil {
+		app.errorLog.Println(err)
+	}
+}

@@ -8,7 +8,7 @@
     <h2 class="mt-5 text-center">All Subscriptions</h2>
     <hr>
 
-    <table id="sales-table" class="table table-striped">
+    <table id="subs-table" class="table table-striped">
         <thead>
             <tr>
                 <th>Transaction</th>
@@ -26,7 +26,7 @@
 {{define "js"}}
 <script>
     let token = localStorage.getItem("token");
-    let tbody = document.getElementById("sales-table").getElementsByTagName("tbody")[0];
+    let tbody = document.getElementById("subs-table").getElementsByTagName("tbody")[0];
 
     const requestOptions = {
         method: 'post',
@@ -47,7 +47,7 @@
                 let newRow = tbody.insertRow();
                 let newCell = newRow.insertCell();
 
-                newCell.innerHTML = `<a href="/admin/sales/${i.id}">Subscription ${i.id}</a>`;
+                newCell.innerHTML = `<a href="/admin/subs/${i.id}">Subscription ${i.id}</a>`;
                 
                 newCell = newRow.insertCell();
                 let item = document.createTextNode(i.customer.last_name + ", " + i.customer.first_name);
