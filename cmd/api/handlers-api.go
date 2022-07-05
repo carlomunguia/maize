@@ -532,3 +532,13 @@ func (app *application) AllSales(w http.ResponseWriter, r *http.Request) {
 
 	app.writeJSON(w, http.StatusOK, allSales)
 }
+
+func (app *application) AllSubs(w http.ResponseWriter, r *http.Request) {
+	allSubs, err := app.DB.GetAllSubs()
+	if err != nil {
+		app.badRequest(w, r, err)
+		return
+	}
+
+	app.writeJSON(w, http.StatusOK, allSubs)
+}

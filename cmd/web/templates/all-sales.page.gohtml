@@ -5,7 +5,7 @@
 {{end}}
 
 {{define "content"}}
-    <h2 class="mt-5">All Sales</h2>
+    <h2 class="mt-5 text-center">All Sales</h2>
     <hr>
 
     <table id="sales-table" class="table table-striped">
@@ -41,6 +41,38 @@
     .then(response => response.json())
     .then(function (data) {
         console.log(data);
+
+        if (data) {
+            data.forEach(function (i){
+                let newRow = tbody.insertRow();
+                let newCell = newRow.insertCell();
+
+                newCell.innerHTML = `<a href="/admin/sales/${i.id}">Order ${i.id}</a>`;
+                
+                newCell = newRow.insertCell();
+                let item = document.createTextNode(i.customer.last_name + ", " + i.customer.first_name);
+                newCell.appendChild(item);
+
+                newCell = newRow.insertCell();
+                item = document.createTextNode(i.maize.name);
+                newCell.appendChild(item);
+
+                let cur = formatCurrency(i.transaction.amount);
+                newCell = newRow.insertCell();
+                item = document.createTextNode(cur);
+                newCell.appendChild(item);        
+            })
+        } else {
+              let newRow = tbody.insertRow();
+              let newCell = newRow.insertCell();
+              newCell.setAttribute("colspan", "4");
+              newCell.innerHTML = "No sales found";
+        }     
     })
+
+    function formatCurrency(amount) {
+        let c = parseFloat(amount/100)
+        return c.toLocaleString('en-US', {style: 'currency', currency: 'USD', minimumFractionDigits: 2})
+    }
 </script>
 {{end}}
