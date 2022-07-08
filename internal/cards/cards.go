@@ -120,6 +120,38 @@ func (c *Card) SubscribeToPlan(cust *stripe.Customer, plan, email, last4, cardTy
 	return subscription, nil
 }
 
+func (c *Card) Refund(pi string, amount int) error {
+	stripe.Key = c.Secret
+	amountToRefund := int64(amount)
+
+	refundParams := &stripe.RefundParams{
+		Amount:        &amountToRefund,
+		PaymentIntent: &pi,
+	}
+
+	_, err := refund.New(refundParams)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Card) CancelSub(subID string) error {
+	stripe.Key = c.Secret
+
+	params := &stripe.SubscriptionParams{
+		CancelAtPeriodEnd: stripe.Bool(true),
+	}
+
+	_, err := sub.Update(subID, params)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // cardErrorMessage returns the error message for a card error.
 func cardErrorMessage(code stripe.ErrorCode) string {
 	var msg = ""
@@ -147,21 +179,4 @@ func cardErrorMessage(code stripe.ErrorCode) string {
 	}
 
 	return msg
-}
-
-func (c *Card) Refund(pi string, amount int) error {
-	stripe.Key = c.Secret
-	amountToRefund := int64(amount)
-
-	refundParams := &stripe.RefundParams{
-		Amount:        &amountToRefund,
-		PaymentIntent: &pi,
-	}
-
-	_, err := refund.New(refundParams)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
