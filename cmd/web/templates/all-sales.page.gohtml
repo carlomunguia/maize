@@ -26,8 +26,17 @@
 
 {{define "js"}}
 <script>
+let currentPage = 1;
+let pageSize = 3;
+
+document.addEventListener('DOMContentLoaded', function() {
     let token = localStorage.getItem("token");
     let tbody = document.getElementById("sales-table").getElementsByTagName("tbody")[0];
+
+    let body = {
+        pageSize: pageSize,
+        page: currentPage,
+    }
 
     const requestOptions = {
         method: 'post',
@@ -36,6 +45,7 @@
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + token,
         },
+        body: JSON.stringify(body)
     }
 
     fetch("{{.API}}/api/admin/all-sales", requestOptions)
@@ -43,8 +53,8 @@
     .then(function (data) {
         console.log(data);
 
-        if (data) {
-            data.forEach(function (i){
+        if (data.orders) {
+            data.orders.forEach(function (i){
                 let newRow = tbody.insertRow();
                 let newCell = newRow.insertCell();
 
@@ -77,6 +87,7 @@
               newCell.innerHTML = "No sales found";
         }     
     })
+})
 
     function formatCurrency(amount) {
         let c = parseFloat(amount/100)
