@@ -22,65 +22,114 @@
 
         </tbody>
     </table>
+
+    <nav>
+        <ul id="paginator" class="pagination">
+        
+        </ul>
+    </nav>
 {{end}}
 
 {{define "js"}}
 <script>
-    let token = localStorage.getItem("token");
-    let tbody = document.getElementById("subs-table").getElementsByTagName("tbody")[0];
+let currentPage = 1;
+let pageSize = 5;
 
-    const requestOptions = {
-        method: 'post',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
-        },
+function paginator(pages, curPage) {
+    let p = document.getElementById("paginator");
+
+    let html = `<li class="page-item"><a href="#!" class="page-link pager" data-page="${curPage - 1}">&lt;</a></li>`;
+
+    for (var i = 0; i <= pages; i++) {
+        html += `<li class="page-item"><a href="#!" class="page-link pager" data-page="${i + 1}">${i + 1}</a></li>`;
     }
 
-    fetch("{{.API}}/api/admin/all-subs", requestOptions)
-    .then(response => response.json())
-    .then(function (data) {
-        console.log(data);
+    html += `<li class="page-item"><a href="#!" class="page-link pager" data-page="${curPage + 1}">&gt;</a></li>`;
 
-        if (data) {
-            data.forEach(function (i){
-                let newRow = tbody.insertRow();
-                let newCell = newRow.insertCell();
+    p.innerHTML = html;
 
-                newCell.innerHTML = `<a href="/admin/subs/${i.id}">Subscription ${i.id}</a>`;
-                
-                newCell = newRow.insertCell();
-                let item = document.createTextNode(i.customer.last_name + ", " + i.customer.first_name);
-                newCell.appendChild(item);
+    let pageBtns = document.getElementsByClassName("pager");
+    for (var j = 0; j < pageBtns.length; j++) {
+        pageBtns[j].addEventListener("click", function(evt){
+            let desiredPage = evt.target.getAttribute("data-page");
+            console.log("clicked, and data-page is", desiredPage);
+            if ((desiredPage > 0) && (desiredPage <= pages + 1)) {
+                console.log("would go to page", desiredPage);
+                updateTable(pageSize, desiredPage);
+            }
+        })
+    }
+}
 
-                newCell = newRow.insertCell();
-                item = document.createTextNode(i.maize.name);
-                newCell.appendChild(item);
+function updateTable(ps, cp) {
+  let token = localStorage.getItem("token");
+  let tbody = document.getElementById("subs-table").getElementsByTagName("tbody")[0];
+  tbody.innerHTML = "";
 
-                let cur = formatCurrency(i.transaction.amount);
-                newCell = newRow.insertCell();
-                item = document.createTextNode(cur + "/month");
-                newCell.appendChild(item);
+  let body = {
+    page_size: parseInt(ps, 10),
+    page: parseInt(cp, 10),
+  }
 
-                newCell = newRow.insertCell();
-                if (i.status_id != 1) {
-                    newCell.innerHTML = `<span class="badge bg-danger">Cancelled</span>`;
-                } else {
-                    newCell.innerHTML = `<span class="badge bg-success">Paid</span>`;
-                }        
-            })
-        } else {
+  const requestOptions = {
+      method: 'post',
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token,
+      },
+      body: JSON.stringify(body)
+  }
+
+  fetch("{{.API}}/api/admin/all-subs", requestOptions)
+  .then(response => response.json())
+  .then(function (data) {
+      console.log(data);
+
+      if (data.orders) {
+          data.orders.forEach(function (i){
               let newRow = tbody.insertRow();
               let newCell = newRow.insertCell();
-              newCell.setAttribute("colspan", "4");
-              newCell.innerHTML = "No sales found";
-        }     
-    })
 
-    function formatCurrency(amount) {
-        let c = parseFloat(amount/100)
-        return c.toLocaleString('en-US', {style: 'currency', currency: 'USD', minimumFractionDigits: 2})
-    }
+              newCell.innerHTML = `<a href="/admin/subs/${i.id}">Subscription ${i.id}</a>`;
+                
+              newCell = newRow.insertCell();
+              let item = document.createTextNode(i.customer.last_name + ", " + i.customer.first_name);
+              newCell.appendChild(item);
+
+              newCell = newRow.insertCell();
+              item = document.createTextNode(i.maize.name);
+              newCell.appendChild(item);
+
+              let cur = formatCurrency(i.transaction.amount);
+              newCell = newRow.insertCell();
+              item = document.createTextNode(cur + "/month");
+              newCell.appendChild(item);
+
+              newCell = newRow.insertCell();
+              if (i.status_id != 1) {
+                  newCell.innerHTML = `<span class="badge bg-danger">Cancelled</span>`;
+              } else {
+                  newCell.innerHTML = `<span class="badge bg-success">Paid</span>`;
+              }        
+          })
+          paginator(data.last_page, data.current_page);
+      } else {
+            let newRow = tbody.insertRow();
+            let newCell = newRow.insertCell();
+            newCell.setAttribute("colspan", "4");
+            newCell.innerHTML = "No sales found";
+      }     
+  })
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateTable(pageSize, currentPage);
+})
+
+function formatCurrency(amount) {
+    let c = parseFloat(amount/100)
+    return c.toLocaleString('en-US', {style: 'currency', currency: 'USD', minimumFractionDigits: 2})
+}
 </script>
 {{end}}

@@ -537,7 +537,7 @@ func (app *application) AllSales(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	allSales, lastPage, totalRecords, err := app.DB.GetAllOrdersPaginated(2, 1)
+	allSales, lastPage, totalRecords, err := app.DB.GetAllOrdersPaginated(payload.PageSize, payload.CurrentPage)
 	if err != nil {
 		app.badRequest(w, r, err)
 		return
@@ -551,7 +551,7 @@ func (app *application) AllSales(w http.ResponseWriter, r *http.Request) {
 		Orders       []*models.Order `json:"orders"`
 	}
 
-	resp.CurrentPage = 1
+	resp.CurrentPage = payload.CurrentPage
 	resp.PageSize = payload.PageSize
 	resp.LastPage = lastPage
 	resp.TotalRecords = totalRecords
@@ -561,11 +561,36 @@ func (app *application) AllSales(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) AllSubs(w http.ResponseWriter, r *http.Request) {
-	allSubs, err := app.DB.GetAllSubs()
+	var payload struct {
+		PageSize    int `json:"page_size"`
+		CurrentPage int `json:"page"`
+	}
+
+	err := app.readJSON(w, r, &payload)
 	if err != nil {
 		app.badRequest(w, r, err)
 		return
 	}
+
+	allSubs, lastPage, totalRecords, err := app.DB.GetAllSubsPaginated(payload.PageSize, payload.CurrentPage)
+	if err != nil {
+		app.badRequest(w, r, err)
+		return
+	}
+
+	var resp struct {
+		CurrentPage  int             `json:"current_page"`
+		PageSize     int             `json:"page_size"`
+		LastPage     int             `json:"last_page"`
+		TotalRecords int             `json:"total_records"`
+		Orders       []*models.Order `json:"orders"`
+	}
+
+	resp.CurrentPage = payload.CurrentPage
+	resp.PageSize = payload.PageSize
+	resp.LastPage = lastPage
+	resp.TotalRecords = totalRecords
+	resp.Orders = allSubs
 
 	app.writeJSON(w, http.StatusOK, allSubs)
 }
