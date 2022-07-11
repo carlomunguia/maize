@@ -20,6 +20,8 @@ func (app *application) routes() http.Handler {
 		mux.Get("/all-subs", app.AllSubs)
 		mux.Get("/sales/{id}", app.ShowSale)
 		mux.Get("/subs/{id}", app.ShowSub)
+		mux.Get("/all-users", app.AllUsers)
+		mux.Get("/all-users/{id}", app.OneUser)
 	})
 
 	mux.Get("/maize/{id}", app.ChargeOnce)
