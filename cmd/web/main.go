@@ -105,6 +105,8 @@ func main() {
 		Session:       session,
 	}
 
+	go app.ListenToWSChannel()
+
 	err = app.serve()
 	if err != nil {
 		app.errorLog.Println(err)

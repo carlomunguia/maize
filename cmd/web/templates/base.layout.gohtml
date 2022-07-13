@@ -76,44 +76,76 @@
             </div>
         </div>
     </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
           
-        <script>
-        
+<script>
 
-        function logout() {
-          localStorage.removeItem("token");
-          localStorage.removeItem("token_expiration");
-          location.href = "/logout";
-        }
+{{if eq .IsAuthenticated 1}}
+document.addEventListener('DOMContentLoaded', function() {
+  let socket = new WebSocket('ws://localhost:4000/ws')
 
-    function checkAuth() {
-      if (localStorage.getItem("token") === null) {
-        location.href = "/login";
-        return;
-      } else {
-        let token = localStorage.getItem("token");
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Authorization", "Bearer " + token);
-
-        const requestOptions = {
-          method: "POST",
-          headers: myHeaders,
-      }
-
-      fetch("{{.API}}/api/is-authenticated", requestOptions)
-      .then(response => response.json())
-      .then(function(data){
-        if (data.error === true) {
-          console.log("not authenticated");
-          location.href = "/login";
-        } else {
-          console.log("Authenticated");
-        }
-      })
-    }
+  socket.onopen = () => {
+    console.log('Connected successfully to Websockets')
   }
+
+  socket.onclose = () => {
+    console.log('Disconnected from Websockets')
+  }
+
+  socket.onerror = error => {
+    console.log('Error: ', error)
+  }
+
+  socket.onmessage = message => {
+    let data = JSON.parse(message.data)
+
+    switch(data.action) {
+      case "logout":
+        if (data.user_id === {{.UserID}}) {
+          logout()
+        }
+        break
+      default:
+      }
+    }
+    console.log('Message received: ', message.data)
+  }
+});
+{{end}}
+
+function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("token_expiration");
+    location.href = "/logout";
+}
+
+function checkAuth() {
+  if (localStorage.getItem("token") === null) {
+    location.href = "/login";
+    return;
+  } else {
+    let token = localStorage.getItem("token");
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", "Bearer " + token);
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+  }
+
+  fetch("{{.API}}/api/is-authenticated", requestOptions)
+  .then(response => response.json())
+  .then(function(data){
+    if (data.error === true) {
+      console.log("not authenticated");
+      location.href = "/login";
+    } else {
+      console.log("Authenticated");
+    }
+  })
+ }
+}
   </script>
   {{block "js" .}}
 
