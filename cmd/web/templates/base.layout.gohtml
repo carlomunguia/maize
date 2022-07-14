@@ -81,37 +81,34 @@
 <script>
 
 {{if eq .IsAuthenticated 1}}
-document.addEventListener('DOMContentLoaded', function() {
-  let socket = new WebSocket('ws://localhost:4000/ws')
+let socket;
+document.addEventListener("DOMContentLoaded", function() {
+    socket = new WebSocket("ws://localhost:4000/ws")
 
-  socket.onopen = () => {
-    console.log('Connected successfully to Websockets')
-  }
+    socket.onopen = () => {
+      console.log("Successfully connected to websockets");
+    }
 
-  socket.onclose = () => {
-    console.log('Disconnected from Websockets')
-  }
+    socket.onclose = event => { };
 
-  socket.onerror = error => {
-    console.log('Error: ', error)
-  }
+    socket.onerror = error => { };
 
-  socket.onmessage = message => {
-    let data = JSON.parse(message.data)
+    socket.onmessage = msg => {
+      let data = JSON.parse(msg.data);
 
-    switch(data.action) {
-      case "logout":
-        if (data.user_id === {{.UserID}}) {
-          logout()
-        }
-        break
-      default:
+      switch (data.action) {
+        case "logout":
+          if (data.user_id === "{{.UserID}}") {
+            logout();
+          }
+          break;
+        default:
       }
     }
-    console.log('Message received: ', message.data)
-  }
-});
-{{end}}
+
+  })
+  {{end}}
+
 
 function logout() {
     localStorage.removeItem("token");

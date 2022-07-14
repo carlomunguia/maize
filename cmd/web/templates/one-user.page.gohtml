@@ -45,7 +45,7 @@ class="needs-validation" autocomplete="off" novalidate="">
 
     <div class="float-start">
         <a class="btn btn-primary" href="javascript:void(0);" onclick="val()" id="saveBtn">Save Changes</a>
-        <a class="btn btn-warning" href="/admin/all-users" id="cancelBtn">Cancel</a>
+        <a class="btn btn-warning" href="/admin/all-users" id="cancelBtn">Back</a>
     </div>
     <div class="float-end">
         <a class="btn btn-danger d-none" href="javascript:void(0);" id="deleteBtn">Delete</a>
@@ -163,6 +163,13 @@ delBtn.addEventListener("click", function() {
                 if (data.error) {
                     Swal.fire("Error: " + data.message);
                 } else {
+                    let jsonData = {
+                        action: "deleteUser",
+                        user_id: parseInt(id, 10),
+                    }
+
+                    socket.send(JSON.stringify(jsonData));
+
                     location.href="/admin/all-users";
                 }
             })

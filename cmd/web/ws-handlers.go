@@ -15,6 +15,7 @@ type WsPayload struct {
 	Message     string              `json:"message"`
 	MessageType string              `json:"messageType"`
 	UserName    string              `json:"username"`
+	UserID      int                 `json:"user_id"`
 	Conn        WebSocketConnection `json:"-"`
 }
 
@@ -89,7 +90,9 @@ func (app *application) ListenToWSChannel() {
 		case "deleteUser":
 			response.Action = "logout"
 			response.Message = "Your account has been deleted"
+			response.UserID = e.UserID
 			app.broadcastToAll(response)
+
 		default:
 		}
 	}
@@ -97,9 +100,10 @@ func (app *application) ListenToWSChannel() {
 
 func (app *application) broadcastToAll(response WsJsonResponse) {
 	for client := range clients {
+		// broadcast to every connected client
 		err := client.WriteJSON(response)
 		if err != nil {
-			app.errorLog.Printf("Websocket error: %s on %s", response.Action, err)
+			app.errorLog.Printf("Websocket err on %s: %s", response.Action, err)
 			_ = client.Close()
 			delete(clients, client)
 		}
