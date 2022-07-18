@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -40,6 +41,18 @@ type jsonResponse struct {
 	Message string `json:"message,omitempty"`
 	Content string `json:"content,omitempty"`
 	ID      int    `json:"id,omitempty"`
+}
+
+type Invoice struct {
+	ID        int       `json:"id"`
+	MaizeID   int       `json:"maize_id"`
+	Amount    int       `json:"amount"`
+	Product   string    `json:"product"`
+	Quantity  int       `json:"quantity"`
+	FirstName string    `json:"first_name"`
+	LastName  string    `json:"last_name"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 // GetPaymentIntent returns a payment intent
@@ -204,7 +217,24 @@ func (app *application) CreateCustomerAndSubscribeToPlan(w http.ResponseWriter, 
 			UpdatedAt:     time.Now(),
 		}
 
-		_, err = app.SaveOrder(order)
+		orderID, err := app.SaveOrder(order)
+		if err != nil {
+			app.errorLog.Println(err)
+			return
+		}
+
+		inv := Invoice{
+			ID:        orderID,
+			Amount:    2000,
+			Product:   "Bronze Plan Monthly Subscription",
+			Quantity:  order.Quantity,
+			FirstName: data.FirstName,
+			LastName:  data.LastName,
+			Email:     data.Email,
+			CreatedAt: time.Now(),
+		}
+
+		err = app.callInvoiceMicroService(inv)
 		if err != nil {
 			app.errorLog.Println(err)
 			return
@@ -791,4 +821,32 @@ func (app *application) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	resp.Error = false
 	app.writeJSON(w, http.StatusOK, resp)
+}
+
+func (app *application) callInvoiceMicroService(inv Invoice) error {
+	url := GoDotEnvVariable("INVOICE_SERVICE_URL")
+
+	out, err := json.MarshalIndent(inv, "", "\t")
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(out))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	app.infoLog.Println("response Status & response Body:", resp.Status, resp.Body)
+
+	return nil
 }
