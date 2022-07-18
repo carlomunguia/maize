@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -13,8 +14,8 @@ type WebSocketConnection struct {
 type WsPayload struct {
 	Action      string              `json:"action"`
 	Message     string              `json:"message"`
-	MessageType string              `json:"messageType"`
 	UserName    string              `json:"username"`
+	MessageType string              `json:"message_type"`
 	UserID      int                 `json:"user_id"`
 	Conn        WebSocketConnection `json:"-"`
 }
@@ -22,15 +23,13 @@ type WsPayload struct {
 type WsJsonResponse struct {
 	Action  string `json:"action"`
 	Message string `json:"message"`
-	UserID  int    `json:"userID"`
+	UserID  int    `json:"user_id"`
 }
 
 var upgradeConnection = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
+	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
 var clients = make(map[WebSocketConnection]string)
@@ -44,9 +43,9 @@ func (app *application) WsEndPoint(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.infoLog.Printf("New connection from %s", r.RemoteAddr)
+	app.infoLog.Println(fmt.Sprintf("Client connected from %s", r.RemoteAddr))
 	var response WsJsonResponse
-	response.Message = "Connected to the server"
+	response.Message = "Connected to server"
 
 	err = ws.WriteJSON(response)
 	if err != nil {
@@ -58,13 +57,12 @@ func (app *application) WsEndPoint(w http.ResponseWriter, r *http.Request) {
 	clients[conn] = ""
 
 	go app.ListenForWS(&conn)
-
 }
 
 func (app *application) ListenForWS(conn *WebSocketConnection) {
 	defer func() {
 		if r := recover(); r != nil {
-			app.errorLog.Println("ListenForWS recovered from panic:", r)
+			app.errorLog.Println("ERROR:", fmt.Sprintf("%v", r))
 		}
 	}()
 
@@ -73,8 +71,7 @@ func (app *application) ListenForWS(conn *WebSocketConnection) {
 	for {
 		err := conn.ReadJSON(&payload)
 		if err != nil {
-			app.errorLog.Println(err)
-			break
+			// do nothing
 		} else {
 			payload.Conn = *conn
 			wsChan <- payload
@@ -82,7 +79,7 @@ func (app *application) ListenForWS(conn *WebSocketConnection) {
 	}
 }
 
-func (app *application) ListenToWSChannel() {
+func (app *application) ListenToWsChannel() {
 	var response WsJsonResponse
 	for {
 		e := <-wsChan

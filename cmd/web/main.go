@@ -105,7 +105,7 @@ func main() {
 		Session:       session,
 	}
 
-	go app.ListenToWSChannel()
+	go app.ListenToWsChannel()
 
 	err = app.serve()
 	if err != nil {

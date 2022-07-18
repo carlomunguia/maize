@@ -82,48 +82,45 @@ function updateTable(ps, cp) {
   }
 
   fetch("{{.API}}/api/admin/all-subs", requestOptions)
-  .then(response => response.json())
-  .then(function (data) {
-      console.log(data);
+    .then(response => response.json())
+    .then(function (data) {        
+        if (data) {
+            data.forEach(function(i) {
+                let newRow = tbody.insertRow();
+                let newCell = newRow.insertCell();
+                newCell.innerHTML = `<a href="/admin/subs/${i.id}">Subscription ${i.id}</a>`;
 
-      if (data.orders) {
-          data.orders.forEach(function (i){
-              let newRow = tbody.insertRow();
-              let newCell = newRow.insertCell();
+                newCell = newRow.insertCell();
+                let item = document.createTextNode(i.customer.last_name + ", " + i.customer.first_name);
+                newCell.appendChild(item);
 
-              newCell.innerHTML = `<a href="/admin/subs/${i.id}">Subscription ${i.id}</a>`;
+                newCell = newRow.insertCell();
+                item = document.createTextNode(i.maize.name);
+                newCell.appendChild(item);
                 
-              newCell = newRow.insertCell();
-              let item = document.createTextNode(i.customer.last_name + ", " + i.customer.first_name);
-              newCell.appendChild(item);
+                let cur = formatCurrency(i.transaction.amount);
+                newCell = newRow.insertCell();
+                item = document.createTextNode(cur + "/month");
+                newCell.appendChild(item);
 
-              newCell = newRow.insertCell();
-              item = document.createTextNode(i.maize.name);
-              newCell.appendChild(item);
-
-              let cur = formatCurrency(i.transaction.amount);
-              newCell = newRow.insertCell();
-              item = document.createTextNode(cur + "/month");
-              newCell.appendChild(item);
-
-              newCell = newRow.insertCell();
-              if (i.status_id != 1) {
-                  newCell.innerHTML = `<span class="badge bg-danger">Cancelled</span>`;
-              } else {
-                  newCell.innerHTML = `<span class="badge bg-success">Paid</span>`;
-              }        
-          })
-          paginator(data.last_page, data.current_page);
-      } else {
+                newCell = newRow.insertCell();
+                if (i.status_id != 1) {
+                    newCell.innerHTML = `<span class="badge bg-danger">Cancelled</span>`;
+                } else {
+                    newCell.innerHTML = `<span class="badge bg-success">Paid</span>`;
+                }
+            })
+            paginator(data.last_page, data.current_page);
+        } else {
             let newRow = tbody.insertRow();
             let newCell = newRow.insertCell();
-            newCell.setAttribute("colspan", "4");
-            newCell.innerHTML = "No sales found";
-      }     
-  })
+            newCell.setAttribute("colspan", "5");
+            newCell.innerHTML = "No data available";
+        }
+    })
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function() {
     updateTable(pageSize, currentPage);
 })
 
